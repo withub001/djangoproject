@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
 <!--Стилизация Bootstrap-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Бомбордино Крокодило | Главная</title>
+    <title>Корзина</title>
 </head>
 <body>
 <header>
@@ -47,40 +47,32 @@
       </div>
     </div>
   </header>
-<div class="d-flex 100">
-    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-      <span class="fs-4">Категории</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-        {% for c in categories %}
-      <li class="nav-item">
-        <a href="/category/{{ c.id }}" class="nav-link active" aria-current="page">
-            {{ c }}
-        </a>
-      </li>
-        <br>
-        {% endfor %}
-    </ul>
-    <hr>
-  </div>
-    <div class="container px-4 py-5" id="featured-3">
-    <h2 class="pb-2 border-bottom">Продукты</h2>
-    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-        {% for p in products %}
-      <div class="feature col">
-          <img src="{{ p.product_photo.url }}" alt="{{ p }}" width="250" height="250">
-          <h2>{{ p }}</h2>
-          <p>{{ p.product_des }}</p>
-          <a href="/product/{{ p.id }}" class="icon-link">
-            Подробнее >
-          </a>
-      </div>
-        {% endfor %}
-    </div>
-  </div>
+<div class="container">
+  {% if cart|length > 0 %}
+  {% for c in cart %}
+  <img src="{{ c.user_product.product_photo.url }}" alt="" width="350" height="350">
+  <br>
+  <h2>{{ c.user_product }}</h2>
+  <br>
+  <p>Количество: {{ c.user_pr_amount }}</p>
+  <br>
+  <p>Сумма за товары: {% widthratio c.user_product.product_price 1 c.user_pr_amount %}</p>
+  <br>
+  <form action="/del-from-cart/{{ c.user_product.id }}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить</button>
+  </form>
+  <br>
+  {% endfor %}
+  <h2>Итог: ${{ total }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Оформить заказ</button>
+  </form>
+  {% else %}
+  <center><h1>Товаров в корзине пока нет!</h1></center>
+  <center><a href="/"><button class="btn btn-primary">На главную</button></a></center>
+  {% endif %}
 </div>
 </body>
 </html>
